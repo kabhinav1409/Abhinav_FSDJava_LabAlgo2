@@ -1,47 +1,49 @@
-package com.paymoney;
+package currencyDenomination;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Enter the size of the transaction array:");
+        System.out.print("Enter the size of currency denominations: ");
         int size = scanner.nextInt();
 
-        int[] transactions = new int[size];
-        System.out.println("Enter the values of the array:");
+        int[] denominations = new int[size];
+        System.out.println("Enter the currency denominations value:");
         for (int i = 0; i < size; i++) {
-            transactions[i] = scanner.nextInt();
+            denominations[i] = scanner.nextInt();
         }
 
-        System.out.println("Enter the total number of targets that need to be achieved:");
-        int numTargets = scanner.nextInt();
+        System.out.print("Enter the amount you want to pay: ");
+        int amount = scanner.nextInt();
 
-        for (int i = 0; i < numTargets; i++) {
-            System.out.println("Enter the value of the target:");
-            int target = scanner.nextInt();
+        int[] paymentApproach = getMinimumNotes(denominations, amount);
 
-            int achievedTransactionIndex = getAchievedTransactionIndex(transactions, target);
-
-            if (achievedTransactionIndex != -1) {
-                System.out.println("Target achieved after " + achievedTransactionIndex + " transaction(s)");
-            } else {
-                System.out.println("Given target is not achieved");
+        System.out.println("Your payment approach in order to give the minimum number of notes will be:");
+        for (int i = 0; i < size; i++) {
+            if (paymentApproach[i] != 0) {
+                System.out.println(denominations[i] + ":" + paymentApproach[i]);
             }
         }
 
         scanner.close();
     }
 
-    public static int getAchievedTransactionIndex(int[] transactions, int target) {
-        int sum = 0;
-        for (int i = 0; i < transactions.length; i++) {
-            sum += transactions[i];
-            if (sum >= target) {
-                return i + 1;
+    public static int[] getMinimumNotes(int[] denominations, int amount) {
+        int size = denominations.length;
+        int[] paymentApproach = new int[size];
+
+        Arrays.sort(denominations); // Sort the denominations in ascending order
+
+        for (int i = size - 1; i >= 0; i--) {
+            if (amount >= denominations[i]) {
+                paymentApproach[i] = amount / denominations[i];
+                amount = amount % denominations[i];
             }
         }
-        return -1;
+
+        return paymentApproach;
     }
 }
